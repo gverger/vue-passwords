@@ -7,9 +7,12 @@ import store from './store'
 
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.css'
+Vue.use(VueMaterial)
+
+import VueClipboards from 'vue-clipboards';
+Vue.use(VueClipboards);
 
 Vue.config.productionTip = false
-Vue.use(VueMaterial)
 
 /* eslint-disable no-new */
 new Vue({

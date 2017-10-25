@@ -14,7 +14,7 @@
             <md-button class="md-icon-button" md-menu-trigger slot="icon">
               <md-icon>people</md-icon>
             </md-button>
-            <md-option v-for="user in users" :value="user.id">{{user.name}}</md-option>
+            <md-option v-for="user in users" :key="user.id" :value="user.id">{{user.name}}</md-option>
           </md-select>
         </md-layout>
       </md-layout>
@@ -28,7 +28,7 @@
       </md-toolbar>
 
       <md-list>
-        <md-list-item v-for='profile in profiles' @click="selectProfile(profile); closeLeftSidenav()">
+        <md-list-item v-for='profile in profiles' :key="profile.id" @click="selectProfile(profile); closeLeftSidenav()">
           <span>{{profile.name}}</span>
 
           <md-button class="md-icon-button md-list-action">
@@ -40,41 +40,72 @@
       <md-button class="md-raised md-accent" @click="closeLeftSidenav">Close</md-button>
     </md-sidenav>
 
-    <form novalidate @submit.stop.prevent="submit">
-      <md-input-container>
-        <label>Main Password</label>
-        <md-input type="password" v-model="mainPassword"></md-input>
-      </md-input-container>
-    </form>
+    <md-layout md-gutter md-flex-offset="10">
+      <md-layout md-flex='50'>
+        <md-input-container>
+          <label v-if="mainPassword.length == 0">Main Password</label>
+          <label v-else>Check: {{ checkSum }}</label>
+          <md-input type="password" v-model="mainPassword"></md-input>
+        </md-input-container>
+      </md-layout>
+    </md-layout>
 
-    <md-layout md-gutter>
-      <md-layout md-flex=33>
-        <md-list>
-          <md-list-item v-for='password in passwords' class='md-double-line'>
-            <div class="md-list-text-container">
-              <span>{{password.accountName}}</span>
-              <span>{{password.userName}}</span>
-            </div>
+    <md-layout md-gutter md-flex-offset="10">
+      <md-layout md-flex="40">
+        <md-card>
+          <md-card-header>
+            <md-layout>
+              <md-layout md-flex="70">
+                <md-input-container>
+                  <label>Search</label>
+                  <md-input v-model="searchString"></md-input>
+                </md-input-container>
+              </md-layout>
+              <md-layout md-align="end">
+                <md-button class="md-icon-button md-raised md-primary">
+                  <md-icon>add</md-icon>
+                </md-button>
+              </md-layout>
+            </md-layout>
+          </md-card-header>
+          <md-card-content>
+            <md-list>
+              <md-list-item v-for='password in filteredPasswords' :key="password.id" class='md-triple-line'>
+                <md-button class="md-icon-button md-list-action">
+                  <md-icon>delete</md-icon>
+                </md-button>
+                <div class="md-list-text-container">
+                  <span>{{password.accountName}}</span>
+                  <span>{{password.userName}}</span>
+                </div>
+                <md-button class="md-icon-button md-list-action" v-clipboard="generate(password)">
+                  <md-icon>vpn_key</md-icon>
+                </md-button>
 
-            <md-button class="md-icon-button md-list-action">
-              <md-icon>delete</md-icon>
-            </md-button>
-          </md-list-item>
-        </md-list>
+              </md-list-item>
+            </md-list>
+          </md-card-content>
+
+        </md-card>
       </md-layout>
     </md-layout>
   </div>
 </template>
 
 <script>
+import passwordMaker from '@/utils/md5.js'
+import fuzzyMatchMixin from '@/utils/fuzzy-match'
+
 export default {
   name: 'Hello',
+  mixins: [fuzzyMatchMixin],
   data () {
     return {
       title: 'Passwords',
       currentUserId: 1,
       currentProfileId: 1,
-      mainPassword: ''
+      mainPassword: '',
+      searchString: ''
     }
   },
   methods: {
@@ -86,6 +117,9 @@ export default {
     },
     selectProfile(profile) {
       this.currentProfileId = profile.id
+    },
+    generate(password) {
+      return "PASSWORD"
     }
   },
   computed: {
@@ -98,6 +132,9 @@ export default {
     passwords () {
       return this.$store.getters.passwords(this.currentProfile)
     },
+    filteredPasswords () {
+      return this.passwords.filter(pwd => this.fuzzyMatch(this.searchString, pwd.accountName))
+    },
     currentUser () {
       return this.$store.getters.user(this.currentUserId)
     },
@@ -107,6 +144,12 @@ export default {
         profile = this.profiles[0]
       }
       return profile;
+    },
+    checkSum () {
+        let key = this.mainPassword
+        let charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        let password = passwordMaker.any_md5(key, charset)
+        return password.substr(0,3)
     }
   }
 }
