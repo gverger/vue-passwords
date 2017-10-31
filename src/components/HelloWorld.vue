@@ -105,7 +105,10 @@ export default {
       currentUserId: 1,
       currentProfileId: 1,
       mainPassword: '',
-      searchString: ''
+      searchString: '',
+      lastPing: null,
+      pingInterval: null,
+      detectPing: null
     }
   },
   methods: {
@@ -120,7 +123,23 @@ export default {
     },
     generate(password) {
       return "PASSWORD"
-    }
+    },
+    detectSleep () {
+      const self = this
+      const timePeriod = 5000 //10 * 60 * 1000 // 10 minutes
+      this.lastPing = (new Date()).getTime()
+
+      this.pingInterval = setInterval(function() {
+        self.lastPing = (new Date()).getTime()
+      }, timePeriod)
+
+      this.detectPing = setInterval(function() {
+        let currentTime = (new Date()).getTime()
+        if (currentTime > (self.lastPing + timePeriod * 2)) {
+          self.mainPassword = ""
+        }
+      }, 2000)
+    },
   },
   computed: {
     users () {
@@ -151,6 +170,14 @@ export default {
         let password = passwordMaker.any_md5(key, charset)
         return password.substr(0,3)
     }
-  }
+  },
+  mounted: function() {
+    const self = this
+    this.detectSleep()
+  },
+  beforeDestroy () {
+    clearInterval(this.pingInterval)
+    clearInterval(this.detectPing)
+  },
 }
 </script>
