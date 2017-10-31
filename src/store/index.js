@@ -81,7 +81,8 @@ const getters = {
   user: state => id => state.users[id],
   profiles: state => user => Object.keys(state.profiles).map(key => state.profiles[key]).filter(profile => profile.userId === user.id),
   profile: state => id => state.profiles[id],
-  passwords: state => profile => Object.keys(state.passwords).map(key => state.passwords[key]).filter(passwords => passwords.profileId === profile.id)
+  passwords: state => profile => Object.keys(state.passwords).map(key => state.passwords[key]).filter(passwords => passwords.profileId === profile.id),
+  password: state => id => state.passwords[id]
 }
 
 export default new Vuex.Store({

@@ -40,53 +40,64 @@
       <md-button class="md-raised md-accent" @click="closeLeftSidenav">Close</md-button>
     </md-sidenav>
 
-    <md-layout md-gutter md-flex-offset="10">
-      <md-layout md-flex='50'>
-        <md-input-container>
-          <label v-if="mainPassword.length == 0">Main Password</label>
-          <label v-else>Check: {{ checkSum }}</label>
-          <md-input type="password" v-model="mainPassword"></md-input>
-        </md-input-container>
+    <md-layout md-gutter md-flex-offset="10" md-column>
+      <md-layout md-row>
+        <md-layout md-flex='40'>
+          <md-input-container>
+            <md-icon>vpn_key</md-icon>
+            <label v-if="mainPassword.length == 0">Main Password</label>
+            <label v-else>Check: {{ checkSum }}</label>
+            <md-input type="password" v-model="mainPassword"></md-input>
+          </md-input-container>
+        </md-layout>
       </md-layout>
-    </md-layout>
 
-    <md-layout md-gutter md-flex-offset="10">
-      <md-layout md-flex="40">
-        <md-card>
-          <md-card-header>
-            <md-layout>
-              <md-layout md-flex="70">
-                <md-input-container>
-                  <label>Search</label>
-                  <md-input v-model="searchString"></md-input>
-                </md-input-container>
+      <md-layout md-row md-gutter="16">
+        <md-layout md-flex='40' md-align="end">
+          <md-card>
+            <md-card-header>
+              <md-layout>
+                <md-layout md-flex="70">
+                  <md-input-container md-clearable>
+                    <label>Search</label>
+                    <md-input v-model="searchString"></md-input>
+                  </md-input-container>
+                </md-layout>
+                <md-layout md-align="end">
+                  <md-button class="md-icon-button md-raised md-primary">
+                    <md-icon>add</md-icon>
+                  </md-button>
+                </md-layout>
               </md-layout>
-              <md-layout md-align="end">
-                <md-button class="md-icon-button md-raised md-primary">
-                  <md-icon>add</md-icon>
-                </md-button>
-              </md-layout>
-            </md-layout>
-          </md-card-header>
-          <md-card-content>
-            <md-list>
-              <md-list-item v-for='password in filteredPasswords' :key="password.id" class='md-triple-line'>
-                <md-button class="md-icon-button md-list-action">
-                  <md-icon>delete</md-icon>
-                </md-button>
-                <div class="md-list-text-container">
-                  <span>{{password.accountName}}</span>
-                  <span>{{password.userName}}</span>
-                </div>
-                <md-button class="md-icon-button md-list-action" v-clipboard="generate(password)">
-                  <md-icon>vpn_key</md-icon>
-                </md-button>
+            </md-card-header>
+            <md-card-content>
+              <md-list>
+                <md-list-item v-if='filteredPasswords.length == 0'>
+                  No account matches your search...
+                </md-list-item>
+                <md-list-item v-for='password in filteredPasswords' :key="password.id" class='md-triple-line'>
+                  <md-button class="md-icon-button md-list-action">
+                    <md-icon>delete</md-icon>
+                  </md-button>
+                  <div class="md-list-text-container">
+                    <span>{{password.accountName}}</span>
+                    <span>{{password.userName}}</span>
+                  </div>
+                  <md-button class="md-icon-button md-list-action">
+                    <md-icon>edit</md-icon>
+                  </md-button>
+                  <md-button class="md-icon-button md-list-action" v-clipboard="generate(password)">
+                    <md-icon class="md-primary">content_paste</md-icon>
+                  </md-button>
 
-              </md-list-item>
-            </md-list>
-          </md-card-content>
-
-        </md-card>
+                </md-list-item>
+              </md-list>
+            </md-card-content>
+          </md-card>
+        </md-layout>
+        <md-layout md-flex>
+          <password-edit password="currentPassword"/>
+        </md-layout>
       </md-layout>
     </md-layout>
   </div>
@@ -96,14 +107,20 @@
 import passwordMaker from '@/utils/md5.js'
 import fuzzyMatchMixin from '@/utils/fuzzy-match'
 
+import PasswordEdit from '@/components/PasswordEdit'
+
 export default {
   name: 'Hello',
   mixins: [fuzzyMatchMixin],
+  components: {
+    "password-edit": PasswordEdit
+  },
   data () {
     return {
       title: 'Passwords',
       currentUserId: 1,
       currentProfileId: 1,
+      currentPasswordId: 1,
       mainPassword: '',
       searchString: '',
       lastPing: null,
@@ -160,6 +177,13 @@ export default {
     currentProfile () {
       let profile = this.$store.getters.profile(this.currentProfileId)
       if (profile.userId !== this.currentUserId) {
+        profile = this.profiles[0]
+      }
+      return profile;
+    },
+    currentPassword () {
+      let password = this.$store.getters.password(this.currentPasswordId)
+      if (password.profileId !== this.currentProfileId) {
         profile = this.profiles[0]
       }
       return profile;

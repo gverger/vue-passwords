@@ -9,9 +9,10 @@ import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.css'
 Vue.use(VueMaterial)
 
+import 'font-awesome/css/font-awesome.css';
+
 import VueClipboards from 'vue-clipboards';
 Vue.use(VueClipboards);
-
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

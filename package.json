@@ -10,6 +10,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "font-awesome": "^4.7.0",
     "vue": "^2.5.2",
     "vue-clipboards": "^1.1.0",
     "vue-material": "^0.7.5",
