@@ -45,9 +45,8 @@
         <md-layout md-flex='40'>
           <md-input-container>
             <md-icon>vpn_key</md-icon>
-            <label v-if="mainPassword.length == 0">Main Password</label>
-            <label v-else>Check: {{ checkSum }}</label>
-            <md-input type="password" v-model="mainPassword"></md-input>
+            <label>Check: {{ checkSum }}</label>
+            <md-input type="password" v-model="mainPassword" placeholder="Main Password"></md-input>
           </md-input-container>
         </md-layout>
       </md-layout>
