@@ -6,6 +6,34 @@ Vue.use(Vuex);
 
 // state
 const state = {
+  charsets: {
+    1: {
+      id: 1,
+      name:'A-Za-z0-9 + special characters',
+      chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`~!@#$%^&*()_-+={}|[]\\:\";\'<>?,./"
+    },
+    2: {
+      id: 2,
+      name:'A-Za-z0-9',
+      chars:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    },
+    3: {
+      id: 3,
+      name:'0-9a-f',
+      chars:"0123456789abcdef"
+    },
+    4: {
+      id: 4,
+      name:'A-Za-z',
+      chars:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    },
+    5: {
+      id: 5,
+      name:'0-9',
+      chars:"0123456789"
+    }
+  },
+  nextCharsetId: 6,
   users: {
     1: {
       id: 1,
@@ -51,7 +79,8 @@ const state = {
       length: 8,
       prefix: "",
       suffix: "",
-      counter: 1
+      counter: 1,
+      charsetId: 1
     },
     2: {
       id: 2,
@@ -61,7 +90,8 @@ const state = {
       length: 8,
       prefix: "",
       suffix: "",
-      counter: 1
+      counter: 1,
+      charsetId: 1
     },
     3: {
       id: 3,
@@ -71,7 +101,8 @@ const state = {
       length: 8,
       prefix: "",
       suffix: "",
-      counter: 1
+      counter: 1,
+      charsetId: 1
     },
   },
   nextUserId: 3,
@@ -86,7 +117,9 @@ const getters = {
   profiles: state => user => Object.keys(state.profiles).map(key => state.profiles[key]).filter(profile => profile.userId === user.id),
   profile: state => id => state.profiles[id],
   passwords: state => profile => Object.keys(state.passwords).map(key => state.passwords[key]).filter(passwords => passwords.profileId === profile.id),
-  password: state => id => state.passwords[id]
+  password: state => id => state.passwords[id],
+  charsets: state => Object.keys(state.charsets).map(key => state.charsets[key]),
+  charset: state => id => state.charsets[id]
 }
 
 const mutations = {
@@ -104,7 +137,8 @@ const mutations = {
       length: 8,
       prefix: "",
       suffix: "",
-      counter: 1
+      counter: 1,
+      charsetId: 1
     }
     Vue.set(state.passwords, passwordId, newPassword)
   },

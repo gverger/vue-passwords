@@ -62,6 +62,14 @@
           </md-input-container>
         </md-layout>
       </md-layout>
+
+      <md-input-container v-bind:class="{ 'md-input-invalid': valueChanged('charsetId') }">
+        <label>Charset</label>
+        <md-select v-model="localPassword.charsetId">
+          <md-option v-for="charset in charsets" :key="charset.id" :value="charset.id">{{charset.name}}</md-option>
+        </md-select>
+        <span class="md-error">Current value: "{{charset(password.charsetId).name}}"</span>
+      </md-input-container>
     </md-card-content>
 
   </md-card>
@@ -95,6 +103,14 @@ export default {
     },
     valueChanged(property) {
       return this.localPassword[property] !== this.password[property]
+    },
+    charset(id) {
+      return this.$store.getters.charset(id)
+    }
+  },
+  computed: {
+    charsets () {
+      return this.$store.getters.charsets
     }
   },
   watch:{
