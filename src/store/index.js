@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import { NEW_PASSWORD, DELETE_PASSWORD, UPDATE_PASSWORD } from './mutation-types'
 
 Vue.use(Vuex);
 
@@ -71,8 +72,11 @@ const state = {
       prefix: "",
       suffix: "",
       counter: 1
-    }
+    },
   },
+  nextUserId: 3,
+  nextProfileId: 5,
+  nextPasswordId: 4
 };
 
 // getters
@@ -85,7 +89,50 @@ const getters = {
   password: state => id => state.passwords[id]
 }
 
+const mutations = {
+  [UPDATE_PASSWORD] (state, { passwordId, newPassword }) {
+    let password = this.getters.password(passwordId)
+    Object.assign(password, newPassword)
+  },
+  [NEW_PASSWORD] (state, { profileId, passwordId }) {
+    console.log(passwordId)
+    let newPassword = {
+      id: passwordId,
+      profileId: profileId,
+      accountName: "",
+      userName: "",
+      length: 8,
+      prefix: "",
+      suffix: "",
+      counter: 1
+    }
+    Vue.set(state.passwords, passwordId, newPassword)
+  },
+  [DELETE_PASSWORD] (state, passwordId) {
+    Vue.delete(state.passwords, passwordId)
+  }
+}
+
+const actions = {
+  [NEW_PASSWORD] ({ commit, state }, profileId) {
+    return new Promise((resolve, reject) => {
+      let passwordId = state.nextPasswordId
+      state.nextPasswordId ++
+      commit(NEW_PASSWORD, { profileId, passwordId })
+      resolve(passwordId)
+    })
+  },
+  [DELETE_PASSWORD] ({commit}, passwordId) {
+    return new Promise((resolve, reject) => {
+      commit(DELETE_PASSWORD, passwordId)
+      resolve(passwordId)
+    })
+  }
+}
+
 export default new Vuex.Store({
   state,
-  getters
+  getters,
+  mutations,
+  actions
 });

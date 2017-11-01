@@ -68,6 +68,8 @@
 </template>
 
 <script>
+import { UPDATE_PASSWORD } from '@/store/mutation-types'
+
 export default {
   // declare the props
   props: ['password'],
@@ -84,7 +86,12 @@ export default {
       this.setLocalPassword(this.password)
     },
     save () {
-      Object.assign(this.password, this.localPassword)
+      this.$store.commit(UPDATE_PASSWORD,
+        {
+          passwordId: this.password.id,
+          newPassword: this.localPassword
+        }
+      )
     },
     valueChanged(property) {
       return this.localPassword[property] !== this.password[property]

@@ -65,7 +65,7 @@
                     </md-input-container>
                 </md-layout>
                 <md-layout md-align="end">
-                  <md-button class="md-icon-button md-raised md-primary">
+                  <md-button class="md-icon-button md-raised md-primary" @click="addPassword(currentProfile)">
                     <md-icon>add</md-icon>
                   </md-button>
                 </md-layout>
@@ -77,7 +77,7 @@
                   No account matches your search...
                 </md-list-item>
                 <md-list-item v-for='password in filteredPasswords' :key="password.id" class='md-triple-line' @click="edit(password)">
-                  <md-button class="md-icon-button md-list-action">
+                  <md-button class="md-icon-button md-list-action" @click="deletePassword(password)">
                     <md-icon>delete</md-icon>
                   </md-button>
                   <div class="md-list-text-container">
@@ -109,6 +109,7 @@ import passwordMaker from '@/utils/md5.js'
 import fuzzyMatchMixin from '@/utils/fuzzy-match'
 
 import PasswordEdit from '@/components/PasswordEdit'
+import { NEW_PASSWORD, DELETE_PASSWORD } from '@/store/mutation-types'
 
 export default {
   name: 'Hello',
@@ -141,6 +142,14 @@ export default {
     },
     edit(password) {
       this.currentPasswordId = password.id
+    },
+    addPassword() {
+      this.$store.dispatch(NEW_PASSWORD, this.currentProfileId).then(
+        (passwordId) => { this.currentPasswordId = passwordId }
+      )
+    },
+    deletePassword(password) {
+      this.$store.dispatch(DELETE_PASSWORD, password.id)
     },
     isCurrentPassword(password) {
       return password.id === this.currentPasswordId
@@ -190,8 +199,8 @@ export default {
     },
     currentPassword () {
       let password = this.$store.getters.password(this.currentPasswordId)
-      if (password.profileId !== this.currentProfileId) {
-        password = this.passwords[0]
+      if (!password || password.profileId !== this.currentProfileId) {
+        password = null
       }
       return password;
     },
