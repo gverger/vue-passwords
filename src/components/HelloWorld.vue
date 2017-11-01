@@ -58,10 +58,11 @@
             <md-card-header>
               <md-layout>
                 <md-layout md-flex="70">
-                  <md-input-container md-clearable>
-                    <label>Search</label>
-                    <md-input v-model="searchString"></md-input>
-                  </md-input-container>
+                    <md-input-container md-clearable md-inline>
+                      <md-icon>search</md-icon>
+                      <label>Search</label>
+                      <md-input v-model="searchString"></md-input>
+                    </md-input-container>
                 </md-layout>
                 <md-layout md-align="end">
                   <md-button class="md-icon-button md-raised md-primary">
@@ -75,7 +76,7 @@
                 <md-list-item v-if='filteredPasswords.length == 0'>
                   No account matches your search...
                 </md-list-item>
-                <md-list-item v-for='password in filteredPasswords' :key="password.id" class='md-triple-line'>
+                <md-list-item v-for='password in filteredPasswords' :key="password.id" class='md-triple-line' @click="edit(password)">
                   <md-button class="md-icon-button md-list-action">
                     <md-icon>delete</md-icon>
                   </md-button>
@@ -83,11 +84,11 @@
                     <span>{{password.accountName}}</span>
                     <span>{{password.userName}}</span>
                   </div>
-                  <md-button class="md-icon-button md-list-action">
-                    <md-icon>edit</md-icon>
-                  </md-button>
                   <md-button class="md-icon-button md-list-action" v-clipboard="generate(password)">
                     <md-icon class="md-primary">content_paste</md-icon>
+                  </md-button>
+                  <md-button v-if="isCurrentPassword(password)" class="md-icon-button md-list-action">
+                    <md-icon class="md-primary">chevron_right</md-icon>
                   </md-button>
 
                 </md-list-item>
@@ -96,7 +97,7 @@
           </md-card>
         </md-layout>
         <md-layout md-flex>
-          <password-edit password="currentPassword"/>
+          <password-edit :password='currentPassword' v-if="currentPassword"/>
         </md-layout>
       </md-layout>
     </md-layout>
@@ -137,6 +138,12 @@ export default {
     },
     selectProfile(profile) {
       this.currentProfileId = profile.id
+    },
+    edit(password) {
+      this.currentPasswordId = password.id
+    },
+    isCurrentPassword(password) {
+      return password.id === this.currentPasswordId
     },
     generate(password) {
       return "PASSWORD"
@@ -184,15 +191,15 @@ export default {
     currentPassword () {
       let password = this.$store.getters.password(this.currentPasswordId)
       if (password.profileId !== this.currentProfileId) {
-        profile = this.profiles[0]
+        password = this.passwords[0]
       }
-      return profile;
+      return password;
     },
     checkSum () {
-        let key = this.mainPassword
-        let charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        let password = passwordMaker.any_md5(key, charset)
-        return password.substr(0,3)
+      let key = this.mainPassword
+      let charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+      let password = passwordMaker.any_md5(key, charset)
+      return password.substr(0,3)
     }
   },
   mounted: function() {
