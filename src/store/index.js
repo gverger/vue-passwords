@@ -127,6 +127,12 @@ const actions = {
       commit(DELETE_PASSWORD, passwordId)
       resolve(passwordId)
     })
+  },
+  [UPDATE_PASSWORD] ({commit}, { passwordId, newPassword }) {
+    return new Promise((resolve, reject) => {
+      commit(UPDATE_PASSWORD, { passwordId, newPassword })
+      resolve(passwordId)
+    })
   }
 }
 

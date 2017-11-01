@@ -86,12 +86,12 @@ export default {
       this.setLocalPassword(this.password)
     },
     save () {
-      this.$store.commit(UPDATE_PASSWORD,
+      this.$store.dispatch(UPDATE_PASSWORD,
         {
           passwordId: this.password.id,
           newPassword: this.localPassword
         }
-      )
+      ).then((passwordId) => { console.log('updated ' + passwordId) })
     },
     valueChanged(property) {
       return this.localPassword[property] !== this.password[property]
