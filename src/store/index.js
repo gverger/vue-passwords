@@ -1,11 +1,14 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import createPersistedState from 'vuex-persistedstate'
+
 import { NEW_PASSWORD, DELETE_PASSWORD, UPDATE_PASSWORD } from './mutation-types'
 
 Vue.use(Vuex);
 
 // state
-const state = {
+const state = { }
+const nothing = {
   charsets: {
     1: {
       id: 1,
@@ -170,9 +173,14 @@ const actions = {
   }
 }
 
+const plugins = [
+  createPersistedState()
+]
+
 export default new Vuex.Store({
   state,
   getters,
   mutations,
-  actions
+  actions,
+  plugins
 });
