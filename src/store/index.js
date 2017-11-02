@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import createPersistedState from 'vuex-persistedstate'
+import uuid from 'uuid/v4'
 
 import { NEW_PASSWORD, DELETE_PASSWORD, UPDATE_PASSWORD } from './mutation-types'
 
@@ -36,7 +37,6 @@ const nothing = {
       chars:"0123456789"
     }
   },
-  nextCharsetId: 6,
   users: {
     1: {
       id: 1,
@@ -107,10 +107,7 @@ const nothing = {
       counter: 1,
       charsetId: 1
     },
-  },
-  nextUserId: 3,
-  nextProfileId: 5,
-  nextPasswordId: 4
+  }
 };
 
 // getters
@@ -153,8 +150,7 @@ const mutations = {
 const actions = {
   [NEW_PASSWORD] ({ commit, state }, profileId) {
     return new Promise((resolve, reject) => {
-      let passwordId = state.nextPasswordId
-      state.nextPasswordId ++
+      let passwordId = uuid()
       commit(NEW_PASSWORD, { profileId, passwordId })
       resolve(passwordId)
     })
