@@ -11,7 +11,7 @@ Vue.use(VueMaterial)
 
 import 'font-awesome/css/font-awesome.css';
 
-import VueClipboards from 'vue-clipboards';
+import VueClipboards from 'v-clipboard';
 Vue.use(VueClipboards);
 Vue.config.productionTip = false
 

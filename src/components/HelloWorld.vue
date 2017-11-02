@@ -83,7 +83,7 @@
                     <span>{{password.accountName}}</span>
                     <span>{{password.userName}}</span>
                   </div>
-                  <md-button class="md-icon-button md-list-action" v-clipboard="generate(password)">
+                  <md-button class="md-icon-button md-list-action" @click="copyGeneratedPassword(password)">
                     <md-icon class="md-primary">content_paste</md-icon>
                   </md-button>
                   <md-button v-if="isCurrentPassword(password)" class="md-icon-button md-list-action">
@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import passwordMaker from '@/utils/md5.js'
+import passwordMD5 from '@/utils/md5.js'
 import fuzzyMatchMixin from '@/utils/fuzzy-match'
 
 import PasswordEdit from '@/components/PasswordEdit'
@@ -153,8 +153,32 @@ export default {
     isCurrentPassword(password) {
       return password.id === this.currentPasswordId
     },
+    charset(id) {
+      return this.$store.getters.charset(id).chars
+    },
+    copyGeneratedPassword(password) {
+      this.$clipboard(this.generate(password))
+    },
     generate(password) {
-      return "PASSWORD"
+      let generatedPassword = ""
+      let count = 0
+      let data = password.accountName + password.userName + password.counter
+      while (generatedPassword.length < password.length) {
+        let key = this.mainPassword + data
+        if (count > 0) {
+          key += "\n" + count
+        }
+        generatedPassword += passwordMD5.any_md5(key, this.charset(password.charsetId))
+        count ++
+      }
+      if (password.prefix) {
+        generatedPassword = password.prefix + generatedPassword
+      }
+      if (password.suffix) {
+        generatedPassword = generatedPassword.substring(0, password.length - password.suffix.length) + password.suffix
+      }
+      generatedPassword = generatedPassword.substring(0, password.length)
+      return generatedPassword
     },
     detectSleep () {
       const self = this
@@ -203,10 +227,13 @@ export default {
       }
       return password;
     },
+    charsets() {
+      return this.$store.getters.charsets
+    },
     checkSum () {
       let key = this.mainPassword
       let charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-      let password = passwordMaker.any_md5(key, charset)
+      let password = passwordMD5.any_md5(key, charset)
       return password.substr(0,3)
     }
   },
