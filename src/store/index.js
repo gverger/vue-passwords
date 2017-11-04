@@ -3,7 +3,17 @@ import Vuex from 'vuex';
 import createPersistedState from 'vuex-persistedstate'
 import uuid from 'uuid/v4'
 
-import { NEW_PASSWORD, DELETE_PASSWORD, UPDATE_PASSWORD } from './mutation-types'
+import {
+  NEW_USER,
+  DELETE_USER,
+  UPDATE_USER,
+  NEW_PROFILE,
+  DELETE_PROFILE,
+  UPDATE_PROFILE,
+  NEW_PASSWORD,
+  DELETE_PASSWORD,
+  UPDATE_PASSWORD
+} from './mutation-types'
 
 Vue.use(Vuex);
 
@@ -123,6 +133,13 @@ const getters = {
 }
 
 const mutations = {
+  [NEW_USER] (state, userId) {
+    let newUser = {
+      id: userId,
+      name: "New user"
+    }
+    Vue.set(state.users, userId, newUser)
+  },
   [UPDATE_PASSWORD] (state, { passwordId, newPassword }) {
     let password = this.getters.password(passwordId)
     Object.assign(password, newPassword)
@@ -148,6 +165,13 @@ const mutations = {
 }
 
 const actions = {
+  [NEW_USER] ({commit, state}) {
+    return new Promise((resolve) => {
+      let userId = uuid()
+      commit(NEW_USER, userId)
+      resolve(userId)
+    })
+  },
   [NEW_PASSWORD] ({ commit, state }, profileId) {
     return new Promise((resolve, reject) => {
       let passwordId = uuid()

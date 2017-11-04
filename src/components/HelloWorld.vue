@@ -5,18 +5,19 @@
         <md-icon>menu</md-icon>
       </md-button>
 
-      <h2 class="md-title">{{ title }} - {{ currentUser.name }} - {{ currentProfile.name }}</h2>
+      <h2 class="md-title" style="flex: 1;">{{ title }} - {{ currentUser.name }} - {{ currentProfile.name }}</h2>
 
-      <md-layout md-align='end'>
-        {{currentUser.name}}
-        <md-layout md-flex="5">
-          <md-select name="users" id="users" v-model="currentUserId">
-            <md-button class="md-icon-button" md-menu-trigger slot="icon">
-              <md-icon>people</md-icon>
-            </md-button>
-            <md-option v-for="user in users" :key="user.id" :value="user.id">{{user.name}}</md-option>
-          </md-select>
-        </md-layout>
+      <md-button class="md-icon-button" @click="addUser">
+        <md-icon>add</md-icon>
+      </md-button>
+      {{currentUser.name}}
+      <md-layout md-flex="5">
+        <md-select name="users" id="users" v-model="currentUserId">
+          <md-button class="md-icon-button" md-menu-trigger slot="icon">
+            <md-icon>people</md-icon>
+          </md-button>
+          <md-option v-for="user in users" :key="user.id" :value="user.id">{{user.name}}</md-option>
+        </md-select>
       </md-layout>
     </md-toolbar>
 
@@ -57,11 +58,11 @@
             <md-card-header>
               <md-layout>
                 <md-layout md-flex="70">
-                    <md-input-container md-clearable md-inline>
-                      <md-icon>search</md-icon>
-                      <label>Search</label>
-                      <md-input v-model="searchString"></md-input>
-                    </md-input-container>
+                  <md-input-container md-clearable md-inline>
+                    <md-icon>search</md-icon>
+                    <label>Search</label>
+                    <md-input v-model="searchString"></md-input>
+                  </md-input-container>
                 </md-layout>
                 <md-layout md-align="end">
                   <md-button class="md-icon-button md-raised md-primary" @click="addPassword(currentProfile)">
@@ -96,6 +97,7 @@
           </md-card>
         </md-layout>
         <md-layout md-flex>
+          {{generate(currentPassword)}}
           <password-edit :password='currentPassword' v-if="currentPassword"/>
         </md-layout>
       </md-layout>
@@ -108,7 +110,7 @@ import passwordMD5 from '@/utils/md5.js'
 import fuzzyMatchMixin from '@/utils/fuzzy-match'
 
 import PasswordEdit from '@/components/PasswordEdit'
-import { NEW_PASSWORD, DELETE_PASSWORD } from '@/store/mutation-types'
+import { NEW_USER, NEW_PASSWORD, DELETE_PASSWORD } from '@/store/mutation-types'
 
 export default {
   name: 'Hello',
@@ -136,6 +138,11 @@ export default {
     closeLeftSidenav() {
       this.$refs.leftSidenav.close()
     },
+    addUser() {
+      this.$store.dispatch(NEW_USER).then(
+        userId => { this.currentUserId = userId }
+      )
+    },
     selectProfile(profile) {
       this.currentProfileId = profile.id
     },
@@ -160,6 +167,9 @@ export default {
       this.$clipboard(this.generate(password))
     },
     generate(password) {
+      if (!password) {
+        return ""
+      }
       let generatedPassword = ""
       let count = 0
       let data = password.accountName + password.userName + password.counter
@@ -215,8 +225,8 @@ export default {
     },
     currentProfile () {
       let profile = this.$store.getters.profile(this.currentProfileId)
-      if (profile.userId !== this.currentUserId) {
-        profile = this.profiles[0]
+      if (!profile || profile.userId !== this.currentUserId) {
+        profile = {}
       }
       return profile;
     },
