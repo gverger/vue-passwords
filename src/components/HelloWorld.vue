@@ -106,7 +106,7 @@
 </template>
 
 <script>
-import passwordMD5 from '@/utils/md5.js'
+import passwordMD5 from '@/utils/md5'
 import fuzzyMatchMixin from '@/utils/fuzzy-match'
 
 import PasswordEdit from '@/components/PasswordEdit'
@@ -128,132 +128,129 @@ export default {
       searchString: '',
       lastPing: null,
       pingInterval: null,
-      detectPing: null
-    }
+      detectPing: null,
+    };
   },
   methods: {
     toggleLeftSidenav() {
-      this.$refs.leftSidenav.toggle()
+      this.$refs.leftSidenav.toggle();
     },
     closeLeftSidenav() {
-      this.$refs.leftSidenav.close()
+      this.$refs.leftSidenav.close();
     },
     addUser() {
-      this.$store.dispatch(NEW_USER).then(
-        userId => { this.currentUserId = userId }
-      )
+      this.$store.dispatch(NEW_USER).then((userId) => { this.currentUserId = userId; });
     },
     selectProfile(profile) {
-      this.currentProfileId = profile.id
+      this.currentProfileId = profile.id;
     },
     edit(password) {
-      this.currentPasswordId = password.id
+      this.currentPasswordId = password.id;
     },
     addPassword() {
-      this.$store.dispatch(NEW_PASSWORD, this.currentProfileId).then(
-        (passwordId) => { this.currentPasswordId = passwordId }
-      )
+      this.$store.dispatch(NEW_PASSWORD, this.currentProfileId)
+        .then((passwordId) => { this.currentPasswordId = passwordId; });
     },
     deletePassword(password) {
-      this.$store.dispatch(DELETE_PASSWORD, password.id)
+      this.$store.dispatch(DELETE_PASSWORD, password.id);
     },
     isCurrentPassword(password) {
-      return password.id === this.currentPasswordId
+      return password.id === this.currentPasswordId;
     },
     charset(id) {
-      return this.$store.getters.charset(id).chars
+      return this.$store.getters.charset(id).chars;
     },
     copyGeneratedPassword(password) {
-      this.$clipboard(this.generate(password))
+      this.$clipboard(this.generate(password));
     },
     generate(password) {
       if (!password) {
-        return ""
+        return '';
       }
-      let generatedPassword = ""
-      let count = 0
-      let data = password.accountName + password.userName + password.counter
+      let generatedPassword = '';
+      let count = 0;
+      const data = password.accountName + password.userName + password.counter;
       while (generatedPassword.length < password.length) {
-        let key = this.mainPassword + data
+        let key = this.mainPassword + data;
         if (count > 0) {
-          key += "\n" + count
+          key += `\n${count}`;
         }
-        generatedPassword += passwordMD5.any_md5(key, this.charset(password.charsetId))
-        count ++
+        generatedPassword += passwordMD5.any_md5(key, this.charset(password.charsetId));
+        count += 1;
       }
       if (password.prefix) {
-        generatedPassword = password.prefix + generatedPassword
+        generatedPassword = password.prefix + generatedPassword;
       }
       if (password.suffix) {
-        generatedPassword = generatedPassword.substring(0, password.length - password.suffix.length) + password.suffix
+        generatedPassword = generatedPassword
+          .substring(0, password.length - password.suffix.length) + password.suffix;
       }
-      generatedPassword = generatedPassword.substring(0, password.length)
-      return generatedPassword
+      generatedPassword = generatedPassword.substring(0, password.length);
+      return generatedPassword;
     },
-    detectSleep () {
-      const self = this
-      const timePeriod = 5000 //10 * 60 * 1000 // 10 minutes
-      this.lastPing = (new Date()).getTime()
+    detectSleep() {
+      const self = this;
+      const timePeriod = 5 * 60 * 1000; // 5 minutes
+      this.lastPing = (new Date()).getTime();
 
-      this.pingInterval = setInterval(function() {
-        self.lastPing = (new Date()).getTime()
-      }, timePeriod)
+      this.pingInterval = setInterval(() => {
+        self.lastPing = (new Date()).getTime();
+      }, timePeriod);
 
-      this.detectPing = setInterval(function() {
-        let currentTime = (new Date()).getTime()
-        if (currentTime > (self.lastPing + timePeriod * 2)) {
-          self.mainPassword = ""
+      this.detectPing = setInterval(() => {
+        const currentTime = (new Date()).getTime();
+        if (currentTime > (self.lastPing + (timePeriod * 2))) {
+          self.mainPassword = '';
         }
-      }, 2000)
+      }, 2000);
     },
   },
   computed: {
-    users () {
-      return this.$store.getters.users
+    users() {
+      return this.$store.getters.users;
     },
     profiles() {
-      return this.$store.getters.profiles(this.currentUser)
+      return this.$store.getters.profiles(this.currentUser);
     },
-    passwords () {
-      return this.$store.getters.passwords(this.currentProfile)
+    passwords() {
+      return this.$store.getters.passwords(this.currentProfile);
     },
-    filteredPasswords () {
-      return this.passwords.filter(pwd => this.fuzzyMatch(this.searchString, pwd.accountName))
+    filteredPasswords() {
+      return this.passwords.filter(pwd => this.fuzzyMatch(this.searchString, pwd.accountName));
     },
-    currentUser () {
-      return this.$store.getters.user(this.currentUserId)
+    currentUser() {
+      return this.$store.getters.user(this.currentUserId);
     },
-    currentProfile () {
-      let profile = this.$store.getters.profile(this.currentProfileId)
-      if (!profile || profile.userId !== this.currentUserId) {
-        profile = {}
+    currentProfile() {
+      let profile = this.$store.getters.profile(this.currentProfileId);
+      if (!profile || profile.userId !== this.currentUserId) {
+        profile = {};
       }
       return profile;
     },
-    currentPassword () {
-      let password = this.$store.getters.password(this.currentPasswordId)
+    currentPassword() {
+      let password = this.$store.getters.password(this.currentPasswordId);
       if (!password || password.profileId !== this.currentProfileId) {
-        password = null
+        password = null;
       }
       return password;
     },
     charsets() {
-      return this.$store.getters.charsets
+      return this.$store.getters.charsets;
     },
-    checkSum () {
-      let key = this.mainPassword
-      let charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-      let password = passwordMD5.any_md5(key, charset)
-      return password.substr(0,3)
-    }
+    checkSum() {
+      const key = this.mainPassword;
+      const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const password = passwordMD5.any_md5(key, charset);
+      return password.substr(0, 3);
+    },
   },
-  mounted: function() {
-    const self = this
-    this.detectSleep()
+  mounted() {
+    this.detectSleep();
   },
-  beforeDestroy () {
-    clearInterval(this.pingInterval)
-    clearInterval(this.detectPing)
+  beforeDestroy() {
+    clearInterval(this.pingInterval);
+    clearInterval(this.detectPing);
   },
-}
+};
 </script>
