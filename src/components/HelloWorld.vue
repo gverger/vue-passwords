@@ -5,7 +5,9 @@
         <md-icon>menu</md-icon>
       </md-button>
 
-      <h2 class="md-title" style="flex: 1;">{{ title }} - {{ currentUser.name }} - {{ currentProfile.name }}</h2>
+      <h2 class="md-title" style="flex: 1;">
+        {{ title }} - {{ currentUser.name }} - {{ currentProfile.name }}
+      </h2>
 
       <md-button class="md-icon-button" @click="addUser">
         <md-icon>add</md-icon>
@@ -65,7 +67,8 @@
                   </md-input-container>
                 </md-layout>
                 <md-layout md-align="end">
-                  <md-button class="md-icon-button md-raised md-primary" @click="addPassword(currentProfile)">
+                  <md-button class="md-icon-button md-primary md-raised"
+                             @click="addPassword(currentProfile)">
                     <md-icon>add</md-icon>
                   </md-button>
                 </md-layout>
@@ -90,7 +93,6 @@
                   <md-button v-if="isCurrentPassword(password)" class="md-icon-button md-list-action">
                     <md-icon class="md-primary">chevron_right</md-icon>
                   </md-button>
-
                 </md-list-item>
               </md-list>
             </md-card-content>
@@ -106,19 +108,19 @@
 </template>
 
 <script>
-import passwordMD5 from '@/utils/md5'
-import fuzzyMatchMixin from '@/utils/fuzzy-match'
+import passwordMD5 from '@/utils/md5';
+import fuzzyMatchMixin from '@/utils/fuzzy-match';
 
-import PasswordEdit from '@/components/PasswordEdit'
-import { NEW_USER, NEW_PASSWORD, DELETE_PASSWORD } from '@/store/mutation-types'
+import PasswordEdit from '@/components/PasswordEdit';
+import { NEW_USER, NEW_PASSWORD, DELETE_PASSWORD } from '@/store/mutation-types';
 
 export default {
   name: 'Hello',
   mixins: [fuzzyMatchMixin],
   components: {
-    "password-edit": PasswordEdit
+    'password-edit': PasswordEdit,
   },
-  data () {
+  data() {
     return {
       title: 'Passwords',
       currentUserId: 1,
