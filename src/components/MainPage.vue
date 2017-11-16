@@ -2,8 +2,13 @@
   <div class="passwords-viewport">
     <md-toolbar>
       <h2 class="md-title" style="flex: 1;">
-        {{ title }} - {{ currentUser.name }} - {{ currentProfile.name }}
+        PASSWORDS
       </h2>
+      <md-input-container>
+        <md-icon>vpn_key</md-icon>
+        <label>Check: {{ checkSum }}</label>
+        <md-input type="password" v-model="mainPassword" placeholder="Main Password"></md-input>
+      </md-input-container>
 
       <md-button class="md-icon-button" @click="addUser">
         <md-icon>add</md-icon>
@@ -22,11 +27,6 @@
     <md-layout md-gutter md-flex-offset="10" md-column>
       <md-layout md-row>
         <md-layout md-flex='40'>
-          <md-input-container>
-            <md-icon>vpn_key</md-icon>
-            <label>Check: {{ checkSum }}</label>
-            <md-input type="password" v-model="mainPassword" placeholder="Main Password"></md-input>
-          </md-input-container>
         </md-layout>
       </md-layout>
 
