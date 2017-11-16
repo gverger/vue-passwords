@@ -1,18 +1,20 @@
 <template>
   <div class="passwords-viewport">
     <md-toolbar>
-      <md-button class="md-icon-button" @click="toggleLeftSidenav">
-        <md-icon>menu</md-icon>
-      </md-button>
-
       <h2 class="md-title" style="flex: 1;">
-        {{ title }} - {{ currentUser.name }} - {{ currentProfile.name }}
+        PASSWORDS
+        {{currentUser.name}}
       </h2>
+        
+      <div>
+        <md-input-container>
+          <md-icon>vpn_key</md-icon>
+          <md-input type="password" v-model="mainPassword" placeholder="Master Password"></md-input>
+        </md-input-container>
+          <span v-if="mainPassword">Check: {{ checkSum }}</span>
+      </div>
 
-      <md-button class="md-icon-button" @click="addUser">
-        <md-icon>add</md-icon>
-      </md-button>
-      {{currentUser.name}}
+
       <md-layout md-flex="5">
         <md-select name="users" id="users" v-model="currentUserId">
           <md-button class="md-icon-button" md-menu-trigger slot="icon">
@@ -23,34 +25,9 @@
       </md-layout>
     </md-toolbar>
 
-    <md-sidenav class="md-left" ref="leftSidenav">
-      <md-toolbar>
-        <div class="md-toolbar-container">
-          <h3 class="md-title">Profiles</h3>
-        </div>
-      </md-toolbar>
-
-      <md-list>
-        <md-list-item v-for='profile in profiles' :key="profile.id" @click="selectProfile(profile); closeLeftSidenav()">
-          <span>{{profile.name}}</span>
-
-          <md-button class="md-icon-button md-list-action">
-            <md-icon class="md-primary">chevron_right</md-icon>
-          </md-button>
-        </md-list-item>
-      </md-list>
-
-      <md-button class="md-raised md-accent" @click="closeLeftSidenav">Close</md-button>
-    </md-sidenav>
-
     <md-layout md-gutter md-flex-offset="10" md-column>
       <md-layout md-row>
         <md-layout md-flex='40'>
-          <md-input-container>
-            <md-icon>vpn_key</md-icon>
-            <label>Check: {{ checkSum }}</label>
-            <md-input type="password" v-model="mainPassword" placeholder="Main Password"></md-input>
-          </md-input-container>
         </md-layout>
       </md-layout>
 
@@ -134,12 +111,6 @@ export default {
     };
   },
   methods: {
-    toggleLeftSidenav() {
-      this.$refs.leftSidenav.toggle();
-    },
-    closeLeftSidenav() {
-      this.$refs.leftSidenav.close();
-    },
     addUser() {
       this.$store.dispatch(NEW_USER).then((userId) => { this.currentUserId = userId; });
     },
