@@ -3,7 +3,9 @@
     <md-toolbar>
       <h2 class="md-title" style="flex: 1;">
         PASSWORDS
+        {{currentUser.name}}
       </h2>
+        
       <div>
         <md-input-container>
           <md-icon>vpn_key</md-icon>
@@ -12,10 +14,7 @@
           <span v-if="mainPassword">Check: {{ checkSum }}</span>
       </div>
 
-      <md-button class="md-icon-button" @click="addUser">
-        <md-icon>add</md-icon>
-      </md-button>
-      {{currentUser.name}}
+
       <md-layout md-flex="5">
         <md-select name="users" id="users" v-model="currentUserId">
           <md-button class="md-icon-button" md-menu-trigger slot="icon">
