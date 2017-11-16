@@ -4,11 +4,13 @@
       <h2 class="md-title" style="flex: 1;">
         PASSWORDS
       </h2>
-      <md-input-container>
-        <md-icon>vpn_key</md-icon>
-        <label>Check: {{ checkSum }}</label>
-        <md-input type="password" v-model="mainPassword" placeholder="Main Password"></md-input>
-      </md-input-container>
+      <div>
+        <md-input-container>
+          <md-icon>vpn_key</md-icon>
+          <md-input type="password" v-model="mainPassword" placeholder="Main Password"></md-input>
+        </md-input-container>
+          <span v-if="mainPassword">Check: {{ checkSum }}</span>
+      </div>
 
       <md-button class="md-icon-button" @click="addUser">
         <md-icon>add</md-icon>
