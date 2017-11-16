@@ -18,8 +18,7 @@ import {
 Vue.use(Vuex);
 
 // state
-const state = { }
-const nothing = {
+const state = {
   charsets: {
     1: {
       id: 1,
