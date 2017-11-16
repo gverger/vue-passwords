@@ -1,10 +1,6 @@
 <template>
   <div class="passwords-viewport">
     <md-toolbar>
-      <md-button class="md-icon-button" @click="toggleLeftSidenav">
-        <md-icon>menu</md-icon>
-      </md-button>
-
       <h2 class="md-title" style="flex: 1;">
         {{ title }} - {{ currentUser.name }} - {{ currentProfile.name }}
       </h2>
@@ -22,26 +18,6 @@
         </md-select>
       </md-layout>
     </md-toolbar>
-
-    <md-sidenav class="md-left" ref="leftSidenav">
-      <md-toolbar>
-        <div class="md-toolbar-container">
-          <h3 class="md-title">Profiles</h3>
-        </div>
-      </md-toolbar>
-
-      <md-list>
-        <md-list-item v-for='profile in profiles' :key="profile.id" @click="selectProfile(profile); closeLeftSidenav()">
-          <span>{{profile.name}}</span>
-
-          <md-button class="md-icon-button md-list-action">
-            <md-icon class="md-primary">chevron_right</md-icon>
-          </md-button>
-        </md-list-item>
-      </md-list>
-
-      <md-button class="md-raised md-accent" @click="closeLeftSidenav">Close</md-button>
-    </md-sidenav>
 
     <md-layout md-gutter md-flex-offset="10" md-column>
       <md-layout md-row>
@@ -134,12 +110,6 @@ export default {
     };
   },
   methods: {
-    toggleLeftSidenav() {
-      this.$refs.leftSidenav.toggle();
-    },
-    closeLeftSidenav() {
-      this.$refs.leftSidenav.close();
-    },
     addUser() {
       this.$store.dispatch(NEW_USER).then((userId) => { this.currentUserId = userId; });
     },
