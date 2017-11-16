@@ -7,7 +7,7 @@
       <div>
         <md-input-container>
           <md-icon>vpn_key</md-icon>
-          <md-input type="password" v-model="mainPassword" placeholder="Main Password"></md-input>
+          <md-input type="password" v-model="mainPassword" placeholder="Master Password"></md-input>
         </md-input-container>
           <span v-if="mainPassword">Check: {{ checkSum }}</span>
       </div>
