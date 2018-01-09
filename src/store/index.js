@@ -5,11 +5,8 @@ import uuid from 'uuid/v4'
 
 import {
   NEW_USER,
-  DELETE_USER,
-  UPDATE_USER,
-  NEW_PROFILE,
-  DELETE_PROFILE,
-  UPDATE_PROFILE,
+  // DELETE_USER,
+  // UPDATE_USER,
   NEW_PASSWORD,
   DELETE_PASSWORD,
   UPDATE_PASSWORD
@@ -23,7 +20,7 @@ const state = {
     1: {
       id: 1,
       name:'A-Za-z0-9 + special characters',
-      chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`~!@#$%^&*()_-+={}|[]\\:\";\'<>?,./"
+      chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`~!@#$%^&*()_-+={}|[]\\:\";'<>?,./"
     },
     2: {
       id: 2,
@@ -60,32 +57,10 @@ const state = {
       name: 'Jules'
     }
   },
-  profiles: {
-    1: {
-      id: 1,
-      userId: 1,
-      name: 'Boulot'
-    },
-    2: {
-      id: 2,
-      userId: 1,
-      name: 'Home'
-    },
-    3: {
-      id: 3,
-      userId: 2,
-      name: 'All'
-    },
-    4: {
-      id: 4,
-      userId: 3,
-      name: 'Minus'
-    }
-  },
   passwords: {
     1: {
       id: 1,
-      profileId: 1,
+      userId: 1,
       accountName: "Mail",
       userName: "guillaume@zesty.com",
       length: 8,
@@ -96,7 +71,7 @@ const state = {
     },
     2: {
       id: 2,
-      profileId: 1,
+      userId: 1,
       accountName: "Asana",
       userName: "guillaume@zesty.com",
       length: 8,
@@ -107,7 +82,7 @@ const state = {
     },
     3: {
       id: 3,
-      profileId: 1,
+      userId: 1,
       accountName: "Stories on Board",
       userName: "guillaume@zesty.com",
       length: 8,
@@ -123,9 +98,7 @@ const state = {
 const getters = {
   users: state => Object.keys(state.users).map(key => state.users[key]),
   user: state => id => state.users[id],
-  profiles: state => user => Object.keys(state.profiles).map(key => state.profiles[key]).filter(profile => profile.userId === user.id),
-  profile: state => id => state.profiles[id],
-  passwords: state => profile => Object.keys(state.passwords).map(key => state.passwords[key]).filter(passwords => passwords.profileId === profile.id),
+  passwords: state => userId => Object.keys(state.passwords).map(key => state.passwords[key]).filter(passwords => passwords.userId === userId),
   password: state => id => state.passwords[id],
   charsets: state => Object.keys(state.charsets).map(key => state.charsets[key]),
   charset: state => id => state.charsets[id]
@@ -143,11 +116,10 @@ const mutations = {
     let password = this.getters.password(passwordId)
     Object.assign(password, newPassword)
   },
-  [NEW_PASSWORD] (state, { profileId, passwordId }) {
-    console.log(passwordId)
+  [NEW_PASSWORD] (state, { userId, passwordId }) {
     let newPassword = {
       id: passwordId,
-      profileId: profileId,
+      userId: userId,
       accountName: "",
       userName: "",
       length: 8,
@@ -164,28 +136,28 @@ const mutations = {
 }
 
 const actions = {
-  [NEW_USER] ({commit, state}) {
+  [NEW_USER] ({commit}) {
     return new Promise((resolve) => {
       let userId = uuid()
       commit(NEW_USER, userId)
       resolve(userId)
     })
   },
-  [NEW_PASSWORD] ({ commit, state }, profileId) {
-    return new Promise((resolve, reject) => {
+  [NEW_PASSWORD] ({ commit }, userId) {
+    return new Promise((resolve) => {
       let passwordId = uuid()
-      commit(NEW_PASSWORD, { profileId, passwordId })
+      commit(NEW_PASSWORD, { userId, passwordId })
       resolve(passwordId)
     })
   },
   [DELETE_PASSWORD] ({commit}, passwordId) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       commit(DELETE_PASSWORD, passwordId)
       resolve(passwordId)
     })
   },
   [UPDATE_PASSWORD] ({commit}, { passwordId, newPassword }) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       commit(UPDATE_PASSWORD, { passwordId, newPassword })
       resolve(passwordId)
     })
