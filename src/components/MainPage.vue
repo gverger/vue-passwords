@@ -5,7 +5,7 @@
         PASSWORDS
         {{currentUser.name}}
       </h2>
-        
+
       <div>
         <md-input-container>
           <md-icon>vpn_key</md-icon>
@@ -44,8 +44,7 @@
                   </md-input-container>
                 </md-layout>
                 <md-layout md-align="end">
-                  <md-button class="md-icon-button md-primary md-raised"
-                             @click="addPassword(currentProfile)">
+                  <md-button class="md-icon-button md-primary md-raised" @click="addPassword()">
                     <md-icon>add</md-icon>
                   </md-button>
                 </md-layout>
@@ -101,7 +100,6 @@ export default {
     return {
       title: 'Passwords',
       currentUserId: 1,
-      currentProfileId: 1,
       currentPasswordId: 1,
       mainPassword: '',
       searchString: '',
@@ -114,14 +112,11 @@ export default {
     addUser() {
       this.$store.dispatch(NEW_USER).then((userId) => { this.currentUserId = userId; });
     },
-    selectProfile(profile) {
-      this.currentProfileId = profile.id;
-    },
     edit(password) {
       this.currentPasswordId = password.id;
     },
     addPassword() {
-      this.$store.dispatch(NEW_PASSWORD, this.currentProfileId)
+      this.$store.dispatch(NEW_PASSWORD, this.currentUserId)
         .then((passwordId) => { this.currentPasswordId = passwordId; });
     },
     deletePassword(password) {
@@ -182,11 +177,8 @@ export default {
     users() {
       return this.$store.getters.users;
     },
-    profiles() {
-      return this.$store.getters.profiles(this.currentUser);
-    },
     passwords() {
-      return this.$store.getters.passwords(this.currentProfile);
+      return this.$store.getters.passwords(this.currentUserId);
     },
     filteredPasswords() {
       return this.passwords.filter(pwd => this.fuzzyMatch(this.searchString, pwd.accountName));
@@ -194,16 +186,9 @@ export default {
     currentUser() {
       return this.$store.getters.user(this.currentUserId);
     },
-    currentProfile() {
-      let profile = this.$store.getters.profile(this.currentProfileId);
-      if (!profile || profile.userId !== this.currentUserId) {
-        profile = {};
-      }
-      return profile;
-    },
     currentPassword() {
       let password = this.$store.getters.password(this.currentPasswordId);
-      if (!password || password.profileId !== this.currentProfileId) {
+      if (!password || password.userId !== this.currentUserId) {
         password = null;
       }
       return password;
