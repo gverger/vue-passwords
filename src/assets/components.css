@@ -5,3 +5,9 @@
 .passwords-list {
   margin-top: 10px;
 }
+
+.check-main-password {
+  padding-right: 5px;
+  font-family: monospace;
+  border: thin;
+}

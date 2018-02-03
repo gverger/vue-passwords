@@ -8,11 +8,14 @@
       <div class="md-toolbar-section-end">
         <div class="md-layout md-gutter">
           <div class="md-layout-item">
-            <md-field>
+            <md-field :md-toggle-password="false">
               <md-icon>vpn_key</md-icon>
               <md-input type="password" v-model="mainPassword" placeholder="Master Password"></md-input>
+              <span class="check-main-password">
+                <md-tooltip>Password Checksum</md-tooltip>
+                {{ checkSum }}
+              </span>
             </md-field>
-            <span v-if="mainPassword">Check: {{ checkSum }}</span>
           </div>
 
           <div class="md-layout-item">
@@ -32,7 +35,7 @@
     <div class="main-panel md-layout md-gutter">
       <div class="md-layout-item viewport">
         <md-toolbar :md-elevation="1">
-          <div class="md-title" style="flex: 70">
+          <div class="md-title md-size-70" style="flex: 9">
             <md-field md-clearable md-inline>
               <md-icon>search</md-icon>
               <label>Search</label>
@@ -50,11 +53,11 @@
           <md-list-item v-if='filteredPasswords.length == 0'>
             No account matches your search...
           </md-list-item>
-          <md-list-item v-for='password in filteredPasswords' :key="password.id" class='md-triple-line' @click="edit(password)">
-            <md-button class="md-icon-button md-list-action" @click="deletePassword(password)">
+          <md-list-item v-for='password in filteredPasswords' :key="password.id" class='md-double-line' @click="edit(password)">
+            <md-button class="md-icon-button" @click="deletePassword(password)">
               <md-icon>delete</md-icon>
             </md-button>
-            <div class="md-list-text-container">
+            <div class="md-list-item-text">
               <span>{{password.accountName}}</span>
               <span>{{password.userName}}</span>
             </div>
@@ -190,6 +193,9 @@ export default {
     },
     checkSum() {
       const key = this.mainPassword;
+      if (!key) {
+        return '***'
+      }
       const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
       const password = passwordMD5.any_md5(key, charset);
       return password.substr(0, 3);
