@@ -6,10 +6,13 @@ import router from './router'
 import store from './store'
 
 import VueMaterial from 'vue-material'
-import 'vue-material/dist/vue-material.css'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default-dark.css'
 Vue.use(VueMaterial)
 
 import 'font-awesome/css/font-awesome.css';
+
+import './assets/components.css'
 
 import VueClipboards from 'v-clipboard';
 Vue.use(VueClipboards);
