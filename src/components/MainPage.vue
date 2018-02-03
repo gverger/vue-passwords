@@ -1,85 +1,77 @@
 <template>
   <div class="passwords-viewport">
     <md-toolbar>
-      <h2 class="md-title" style="flex: 1;">
+      <div class="md-title">
         PASSWORDS
-        {{currentUser.name}}
-      </h2>
-
-      <div>
-        <md-input-container>
-          <md-icon>vpn_key</md-icon>
-          <md-input type="password" v-model="mainPassword" placeholder="Master Password"></md-input>
-        </md-input-container>
-          <span v-if="mainPassword">Check: {{ checkSum }}</span>
       </div>
 
+      <div class="md-toolbar-section-end">
+        <div class="md-layout md-gutter">
+          <div class="md-layout-item">
+            <md-field>
+              <md-icon>vpn_key</md-icon>
+              <md-input type="password" v-model="mainPassword" placeholder="Master Password"></md-input>
+            </md-field>
+            <span v-if="mainPassword">Check: {{ checkSum }}</span>
+          </div>
 
-      <md-layout md-flex="5">
-        <md-select name="users" id="users" v-model="currentUserId">
-          <md-button class="md-icon-button" md-menu-trigger slot="icon">
-            <md-icon>people</md-icon>
-          </md-button>
-          <md-option v-for="user in users" :key="user.id" :value="user.id">{{user.name}}</md-option>
-        </md-select>
-      </md-layout>
+          <div class="md-layout-item">
+            <md-field>
+              <md-select name="users" id="users" v-model="currentUserId">
+                <md-button class="md-icon-button" md-menu-trigger slot="icon">
+                  <md-icon>people</md-icon>
+                </md-button>
+                <md-option v-for="user in users" :key="user.id" :value="user.id">{{user.name}}</md-option>
+              </md-select>
+            </md-field>
+          </div>
+        </div>
+      </div>
     </md-toolbar>
 
-    <md-layout md-gutter md-flex-offset="10" md-column>
-      <md-layout md-row>
-        <md-layout md-flex='40'>
-        </md-layout>
-      </md-layout>
+    <div class="main-panel md-layout md-gutter">
+      <div class="md-layout-item viewport">
+        <md-toolbar :md-elevation="1">
+          <div class="md-title" style="flex: 70">
+            <md-field md-clearable md-inline>
+              <md-icon>search</md-icon>
+              <label>Search</label>
+              <md-input v-model="searchString"></md-input>
+            </md-field>
+          </div>
+          <div class="md-toolbar-section-end">
+            <md-button class="md-icon-button md-primary md-raised" @click="addPassword()">
+              <md-icon>add</md-icon>
+            </md-button>
+          </div>
+        </md-toolbar>
 
-      <md-layout md-row md-gutter="16">
-        <md-layout md-flex='40' md-align="end">
-          <md-card>
-            <md-card-header>
-              <md-layout>
-                <md-layout md-flex="70">
-                  <md-input-container md-clearable md-inline>
-                    <md-icon>search</md-icon>
-                    <label>Search</label>
-                    <md-input v-model="searchString"></md-input>
-                  </md-input-container>
-                </md-layout>
-                <md-layout md-align="end">
-                  <md-button class="md-icon-button md-primary md-raised" @click="addPassword()">
-                    <md-icon>add</md-icon>
-                  </md-button>
-                </md-layout>
-              </md-layout>
-            </md-card-header>
-            <md-card-content>
-              <md-list>
-                <md-list-item v-if='filteredPasswords.length == 0'>
-                  No account matches your search...
-                </md-list-item>
-                <md-list-item v-for='password in filteredPasswords' :key="password.id" class='md-triple-line' @click="edit(password)">
-                  <md-button class="md-icon-button md-list-action" @click="deletePassword(password)">
-                    <md-icon>delete</md-icon>
-                  </md-button>
-                  <div class="md-list-text-container">
-                    <span>{{password.accountName}}</span>
-                    <span>{{password.userName}}</span>
-                  </div>
-                  <md-button class="md-icon-button md-list-action" @click="copyGeneratedPassword(password)">
-                    <md-icon class="md-primary">content_paste</md-icon>
-                  </md-button>
-                  <md-button v-if="isCurrentPassword(password)" class="md-icon-button md-list-action">
-                    <md-icon class="md-primary">chevron_right</md-icon>
-                  </md-button>
-                </md-list-item>
-              </md-list>
-            </md-card-content>
-          </md-card>
-        </md-layout>
-        <md-layout md-flex>
-          {{generate(currentPassword)}}
+        <md-list class="passwords-list">
+          <md-list-item v-if='filteredPasswords.length == 0'>
+            No account matches your search...
+          </md-list-item>
+          <md-list-item v-for='password in filteredPasswords' :key="password.id" class='md-triple-line' @click="edit(password)">
+            <md-button class="md-icon-button md-list-action" @click="deletePassword(password)">
+              <md-icon>delete</md-icon>
+            </md-button>
+            <div class="md-list-text-container">
+              <span>{{password.accountName}}</span>
+              <span>{{password.userName}}</span>
+            </div>
+            <md-button class="md-icon-button md-list-action" @click="copyGeneratedPassword(password)">
+              <md-icon class="md-primary">content_paste</md-icon>
+            </md-button>
+            <md-button v-if="isCurrentPassword(password)" class="md-icon-button md-list-action">
+              <md-icon class="md-primary">chevron_right</md-icon>
+            </md-button>
+          </md-list-item>
+        </md-list>
+
+      </div>
+        <div class="md-layout-item">
           <password-edit :password='currentPassword' v-if="currentPassword"/>
-        </md-layout>
-      </md-layout>
-    </md-layout>
+        </div>
+    </div>
   </div>
 </template>
 
